@@ -64,6 +64,11 @@ The algorithm seems to work as intended. I am not sure if it guarantees 100 % co
 
 Performance is decent. I think similar to merge sort (n log(n)). The score calculation in a dict and the copy to check if it changes is not ideal, there is room for optimization there. Memory usage is very low, since the input list can be changed in place, no copies necessary.
 
+Single pass
+-----------
+
+In many cases a divide an conquer approach may not be necessary. Probably a single pass through the input list, so trying to switch each row once and once only to see if it improves the score, is already sufficient to optimize the list. However, it is not always optimal! Probably in cases with relatively few rows and many categories, the single pass is **not** sufficient. Hence, the script will by default use the divide and conquer approach, but you can pass it a -s flag to force it to use only a single iteration through the input list.
+
 Usage
 =====
 

@@ -7,7 +7,7 @@ import logging
 
 logger = logging.getLogger("Sortinghat")
 
-def sortList(listToSort):
+def sortList(listToSort, singlePass = False):
     """
     Change the list so that the number are categories are divided 
         as equally as possible between column 2 and column 3
@@ -17,19 +17,31 @@ def sortList(listToSort):
     """
     logger.info("Score before algorithm: {}".format(calcScore(listToSort, 0, len(listToSort))))
 
-    nrPerIt = 2 # the number of entries to optimize by iteration. Start low and "merge" upwards to bigger and bigger chunks
+    if singlePass:
+        logger.info("Skipping the divide and conquer part, doing a single pass")
+    else:
+        nrPerIt = 2 # the number of entries to optimize by iteration. Start low and "merge" upwards to bigger and bigger chunks
 
-    while nrPerIt < len(listToSort):
-        index = 0
-        while (index + nrPerIt) < len(listToSort):
-            optimizeLocally(listToSort, index, index + nrPerIt)
-            index = index + nrPerIt
-        optimizeLocally(listToSort, index, len(listToSort))
-        nrPerIt = nrPerIt * 2
+        while nrPerIt < len(listToSort):
+            index = 0
+            while (index + nrPerIt) < len(listToSort):
+                optimizeLocally(listToSort, index, index + nrPerIt)
+                index = index + nrPerIt
+            optimizeLocally(listToSort, index, len(listToSort))
+            nrPerIt = nrPerIt * 2
     
     optimizeLocally(listToSort, 0, len(listToSort))
     
-    logger.info("Score after algorithm: {}".format(calcScore(listToSort, 0, len(listToSort))))
+    scoreExceeded = False
+    score = calcScore(listToSort, 0, len(listToSort))
+    for key in score:
+        if score[key] > 1 or score[key] < -1:
+            scoreExceeded = True
+
+    if scoreExceeded:
+        logger.warning("One of the score is not optimal!")  
+
+    logger.info("Score after algorithm: {}".format(score))
 
     return(listToSort)
 

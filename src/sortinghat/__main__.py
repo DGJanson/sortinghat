@@ -8,7 +8,7 @@ from .sort import sortList
 
 logger = logging.getLogger("Sortinghat")
 
-def performSort(numberOfEntries, numberOfCats, inputFile, outputFile):
+def performSort(numberOfEntries, numberOfCats, inputFile, outputFile, singlePass):
     data = []
     if inputFile == "":
         logger.info("Generating test data file with {} entries and {} categories".format(numberOfEntries, numberOfCats))
@@ -21,7 +21,7 @@ def performSort(numberOfEntries, numberOfCats, inputFile, outputFile):
             logger.error("Error while trying to read data from import. Is the file location correct?")
             sys.exit(0)
 
-    sortedList = sortList(data)
+    sortedList = sortList(data, singlePass)
 
     if outputFile == "":
         # print it, if not too long
@@ -49,6 +49,7 @@ def showHelp():
         -c: followed by int, number categories (default 4)
         -i: followed by filename, file to import and sort (this overrides creating a testfile with above settings)
         -o: followed by filename, export list to this file as csv (default to print)
+        -s: flag for single pass (ie. not doing a divide a conquer but a single pass through the input). This is more efficient, but does NOT always work
     """)
 
 if __name__ == "__main__":
@@ -57,6 +58,7 @@ if __name__ == "__main__":
     numberOfCats = 4
     outputFile = ""
     inputFile = ""
+    singlePass = False
     ignoreNext = False
     for n in range(1, len(sys.argv)):
         input = sys.argv[n]
@@ -84,16 +86,18 @@ if __name__ == "__main__":
                     ignoreNext = True
                 except Exception:
                     print("Error parsing -c input. Please check input or use help: -h flag")            
-            elif input == "-i": # secret flag :) Use it to quickly test the input method
+            elif input == "-i": 
                 try:
                     inputFile = sys.argv[n + 1]
                     ignoreNext = True
                 except Exception:
                     print("Error parsing -i input. Please check input or use help: -h flag")            
+            elif input == "-s": 
+                singlePass = True
             else:
                 print("Unknown command. Please use -h flag for help")
                 sys.exit(0)
 
     logging.basicConfig(level = logging.INFO)
     logger.info("Started sortinghat")
-    performSort(numberOfEntries, numberOfCats, inputFile, outputFile)
+    performSort(numberOfEntries, numberOfCats, inputFile, outputFile, singlePass)
